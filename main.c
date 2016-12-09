@@ -163,7 +163,6 @@ void membership() {                    //회원 가입을 위한 메뉴
 	long sendpw[20];              //입력받은 패스 워드 암호화 하고 저장할때 쓰이는 배열.
 	int y;
 	fpout = fopen("membershipinform.txt", "w");
-	fpw = fopen("membershippass.txt", "w");
 
 	if (fpout == NULL)
 	{
@@ -174,13 +173,14 @@ void membership() {                    //회원 가입을 위한 메뉴
 	printf("회원가입을 선택하셨습니다.\n");
 	printf("ID를 입력하세요.\n");
 	scanf("%s", userp.id);
+	fpw = fopen(strcat(userp.id,"password.txt"), "w");
 	printf("Password를 입력하세요.\n");
 	scanf("%s", userp.password);
 	printf("이름을 입력하세요.\n");
 	scanf("%s", userp.name);
 	codeing(userp.password, sendpw);                  //입력한 패스워들 암호화 해서 sendpw에 저장
 	y = 0;
-	while (1) {                                            //sendpw를 파일에 저장함.
+	while (1) {											//sendpw를 파일에 저장함.
 		fprintf(fpw, "%d\t", sendpw[y]);
 		y++;
 		if (sendpw[y] == 0) {
@@ -202,12 +202,13 @@ int loginsystem() {
 
 	long sendpw[10000]; //sendpw는 암호화된 데이터 파일을 불러올때쓰는 배열
 	char recv[100] = { NULL }, buffer[1000], check[100] = { NULL }; //recv는 복호화된 데이터 저장 배열,check는 복호화된 데이터를 이어붙이는 배열
-	system("cls");
-	printf("=====================================================================\n");
-	printf("                           L o g i n  \n");
-	printf("=====================================================================\n");
+
 	printf("ID를 입력하세요.\n");
 	scanf("%s", userq.id);
+	if ((fpass = fopen(strcat(userq.id, "password.txt"), "r")) == NULL) {
+		printf("ID가 틀립니다.\n");
+		return 0;
+	}
 	printf("Password를 입력하세요.\n");
 	scanf("%s", userq.password);
 	while (!feof(fpass))
@@ -227,14 +228,14 @@ int loginsystem() {
 	}
 	if (a == 1) {
 		printf("로그인 성공!\n");
-		system("pasue");
+
 		fclose(fpin);
 		return 1;
 	}
 	else {
 		printf("입력 ID: %s\n", userq.password);
 		printf("로그인 실패 ㅠ..ㅠ\n");
-		system("pasue");
+
 		fclose(fpin);
 		return 0;
 	}
