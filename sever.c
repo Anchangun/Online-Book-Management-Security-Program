@@ -70,7 +70,8 @@ unsigned WINAPI HandleClient(void* arg) {
 	SOCKET clientSock = *((SOCKET*)arg); //매개변수로받은 클라이언트 소켓을 전달
 	int strLen = 0, i;
 	char msg[BUF_SIZE];
-
+	SendMsg("                          B o o k m a n a g e m e n t\n=====================================================================\n                           L o g i n  \n=====================================================================\n                         1. 회 원 가 입\n                         2. 로 그 인\n                         3. 프로그램 종료....\n",357);
+	//클라이언트에게 로그인시스템 메뉴출력
 	while ((strLen = recv(clientSock, msg, sizeof(msg), 0)) != 0) { //클라이언트로부터 메시지를 받을때까지 기다린다.
 		if (!strcmp(msg, "q")) {
 			send(clientSock, "q", 1, 0);
