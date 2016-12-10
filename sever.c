@@ -1,4 +1,5 @@
 #pragma comment(lib, "ws2_32.lib")
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,13 +71,17 @@ unsigned WINAPI HandleClient(void* arg) {
 	SOCKET clientSock = *((SOCKET*)arg); //매개변수로받은 클라이언트 소켓을 전달
 	int strLen = 0, i;
 	char msg[BUF_SIZE];
-	SendMsg("                          B o o k m a n a g e m e n t\n=====================================================================\n                           L o g i n  \n=====================================================================\n                         1. 회 원 가 입\n                         2. 로 그 인\n                         3. 프로그램 종료....\n",357);
-	//클라이언트에게 로그인시스템 메뉴출력
+	SendMsg("                          B o o k m a n a g e m e n t\n=====================================================================\n                           L o g i n  \n=====================================================================\n                         1. 회 원 가 입\n                         2. 로 그 인\n                         3. 프로그램 종료....\n", 357);
 	while ((strLen = recv(clientSock, msg, sizeof(msg), 0)) != 0) { //클라이언트로부터 메시지를 받을때까지 기다린다.
 		if (!strcmp(msg, "q")) {
 			send(clientSock, "q", 1, 0);
 			break;
 		}
+		if (!strcmp(msg, "1")) {
+			SendMsg("회원가입을 선택하셨습니다.\n", 50);
+			SendMsg("ID를 입력하세요.\n", 50);
+		}
+
 		SendMsg(msg, strLen);//SendMsg에 받은 메시지를 전달한다.
 	}
 
@@ -99,7 +104,7 @@ unsigned WINAPI HandleClient(void* arg) {
 void SendMsg(char* msg, int len) { //메시지를 모든 클라이언트에게 보낸다.
 	int i;
 	WaitForSingleObject(hMutex, INFINITE);//뮤텍스 실행
-	for (i = 0; i<clientCount; i++)//클라이언트 개수만큼
+	for (i = 0; i < clientCount; i++)//클라이언트 개수만큼
 		send(clientSocks[i], msg, len, 0);//클라이언트들에게 메시지를 전달한다.
 	ReleaseMutex(hMutex);//뮤텍스 중지
 }

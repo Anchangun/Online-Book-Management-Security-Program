@@ -70,10 +70,21 @@ int main() {
 unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
 	SOCKET sock = *((SOCKET*)arg);//서버용 소켓을 전달한다.
 	char nameMsg[NAME_SIZE + BUF_SIZE];
+	int num=0;
+
 	while (1) {//반복
 		fgets(msg, BUF_SIZE, stdin);//입력을 받는다.
 		if (!strcmp(msg, "q\n")) {//q를 입력하면 종료한다.
 			send(sock, "q", 1, 0);//nameMsg를 서버에게 전송한다.
+		}
+		if (!strcmp(msg, "1\n")) {//q를 입력하면 종료한다.
+			send(sock, "1", 100, 0);//nameMsg를 서버에게 전송한다.
+		}
+		if (!strcmp(msg, "2\n")) {//q를 입력하면 종료한다.
+			send(sock, "2", 1, 0);//nameMsg를 서버에게 전송한다.
+		}
+		if (!strcmp(msg, "3\n")) {//q를 입력하면 종료한다.
+			send(sock, "3", 1, 0);//nameMsg를 서버에게 전송한다.
 		}
 		sprintf(nameMsg, "%s %s", name, msg);//nameMsg에 메시지를 전달한다.
 		send(sock, nameMsg, strlen(nameMsg), 0);//nameMsg를 서버에게 전송한다.
@@ -99,6 +110,7 @@ unsigned WINAPI RecvMsg(void* arg) {
 	}
 	return 0;
 }
+
 
 void ErrorHandling(char* msg) {
 	fputs(msg, stderr);
