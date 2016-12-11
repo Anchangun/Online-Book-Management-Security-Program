@@ -15,14 +15,14 @@ void ErrorHandling(char* msg);
 
 char name[NAME_SIZE] = "[DEFAULT]";
 char msg[BUF_SIZE];
-
+int menu = 0;
 int main() {
 	WSADATA wsaData;
 	SOCKET sock;
 	SOCKADDR_IN serverAddr;
 	HANDLE sendThread, recvThread;
 
-	char myIp[100];
+	char myIp[100]="127.0.0.1";
 	char port[100];
 	char inputName[100];
 	/*
@@ -31,14 +31,14 @@ int main() {
 	exit(1);
 	}
 	*/
-	printf("Input server IP : ");
-	gets(myIp);
+	//printf("Input server IP : ");
+	//gets(myIp);
 
 	printf("Input server port : ");
 	gets(port);
 
 	printf("Input your name : ");
-	gets(inputName);
+    gets(inputName);
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)// 윈도우 소켓을 사용한다고 운영체제에 알림
 		ErrorHandling("WSAStartup() error!");
@@ -70,25 +70,43 @@ int main() {
 unsigned WINAPI SendMsg(void* arg) {//전송용 쓰레드함수
 	SOCKET sock = *((SOCKET*)arg);//서버용 소켓을 전달한다.
 	char nameMsg[NAME_SIZE + BUF_SIZE];
-	int num=0;
+	int num = 0;
 
 	while (1) {//반복
 		fgets(msg, BUF_SIZE, stdin);//입력을 받는다.
 		if (!strcmp(msg, "q\n")) {//q를 입력하면 종료한다.
 			send(sock, "q", 1, 0);//nameMsg를 서버에게 전송한다.
+
 		}
 		if (!strcmp(msg, "1\n")) {//q를 입력하면 종료한다.
 			send(sock, "1", 100, 0);//nameMsg를 서버에게 전송한다.
+			menu = 1;
+			break;
 		}
 		if (!strcmp(msg, "2\n")) {//q를 입력하면 종료한다.
-			send(sock, "2", 1, 0);//nameMsg를 서버에게 전송한다.
+			send(sock, "2", 100, 0);//nameMsg를 서버에게 전송한다.
+		    menu = 2;
+			break;
 		}
 		if (!strcmp(msg, "3\n")) {//q를 입력하면 종료한다.
-			send(sock, "3", 1, 0);//nameMsg를 서버에게 전송한다.
+			send(sock, "3", 100, 0);//nameMsg를 서버에게 전송한다.
+			menu = 3;
+			break;
 		}
-		sprintf(nameMsg, "%s %s", name, msg);//nameMsg에 메시지를 전달한다.
-		send(sock, nameMsg, strlen(nameMsg), 0);//nameMsg를 서버에게 전송한다.
 	}
+	while (1) {
+		fgets(msg, BUF_SIZE, stdin);//입력을 받는다
+		if (menu == 1) {
+			send(sock, msg, 100, 0);
+		}
+		if (menu == 2) {
+			send(sock, msg, 100, 0);
+		}
+		if (menu == 3) {
+			break;
+		}
+	}
+
 	return 0;
 }
 
@@ -101,7 +119,7 @@ unsigned WINAPI RecvMsg(void* arg) {
 		if (strLen == -1)
 			return -1;
 		nameMsg[strLen] = 0;//문자열의 끝을 알리기 위해 설정
-		if (!strcmp(nameMsg, "q")) {
+		if (!strcmp(nameMsg, "3")) {
 			printf("left the chat\n");
 			closesocket(sock);
 			exit(0);
